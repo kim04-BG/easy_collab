@@ -16,6 +16,8 @@ $stmt->bind_result($nom_utilisateur, $prenom_utilisateur, $email_utilisateur);
 $stmt->fetch();
 $stmt->close();
 
+$error_message = '';
+
 if (isset($_POST['creer'])) {
     $nom = htmlspecialchars($_POST['nom']);
     $description = htmlspecialchars($_POST['description']);
@@ -24,25 +26,35 @@ if (isset($_POST['creer'])) {
     $methode = htmlspecialchars($_POST['methode']);
     $statut = "en_attente"; // Définir le statut par défaut
 
-    $stmt = $conn->prepare("INSERT INTO `projet`(`titre`, `description`, `date_debut`, `date_fin`, `statut_projet`, `id_methode`, `id_chef`) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    if ($stmt) {
-        $stmt->bind_param("sssssis", $nom, $description, $date_debut, $date_fin, $statut, $methode, $id_utilisateur);
-        if ($stmt->execute()) {
-            // Récupérer l'ID du projet nouvellement créé
-            $id_projet = $stmt->insert_id;
-            // Stocker l'ID du projet dans la session
-            $_SESSION['id_projet'] = $id_projet;
-            echo '<script>alert("Projet ajouté avec succès"); window.location.href = "ajouttaches.php";</script>';
-        } else {
-            echo '<script>alert("Insertion incorrecte, Problème technique");</script>';
-        }
-        $stmt->close();
+    // Vérification des dates
+    if ($date_debut < date('Y-m-d')) {
+        $error_message = 'La date de début ne peut pas être antérieure à la date actuelle.';
+    } elseif ($date_fin <= $date_debut) {
+        $error_message = 'La date de fin doit être supérieure à la date de début.';
     } else {
-        echo '<script>alert("Erreur lors de la préparation de la requête");</script>';
+        $stmt = $conn->prepare("INSERT INTO `projet`(`titre`, `description`, `date_debut`, `date_fin`, `statut_projet`, `id_methode`, `id_chef`) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        if ($stmt) {
+            $stmt->bind_param("sssssis", $nom, $description, $date_debut, $date_fin, $statut, $methode, $id_utilisateur);
+            if ($stmt->execute()) {
+                // Récupérer l'ID du projet nouvellement créé
+                $id_projet = $stmt->insert_id;
+                // Stocker l'ID du projet dans la session
+                $_SESSION['id_projet'] = $id_projet;
+                echo '<script>alert("Projet ajouté avec succès"); window.location.href = "ajouttaches.php";</script>';
+                exit();
+            } else {
+                $error_message = 'Insertion incorrecte, Problème technique';
+            }
+            $stmt->close();
+        } else {
+            $error_message = 'Erreur lors de la préparation de la requête';
+        }
     }
     $conn->close();
 }
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -93,6 +105,9 @@ if (isset($_POST['creer'])) {
                 <div class="col-md-6">
                     <h2><b>Nouveau Projet</b></h2>
                     <form id="project-form" method="POST">
+                        <?php if (!empty($error_message)): ?>
+                            <div class="alert alert-danger"><?php echo $error_message; ?></div>
+                        <?php endif; ?>
                         <div class="form-group">
                             <input type="text" class="form-control" name="nom" placeholder="Entrez le nom du projet" required>
                         </div>
@@ -104,12 +119,14 @@ if (isset($_POST['creer'])) {
                                 <div class="form-group">
                                     <label for="task1-start-date">Date de Début :</label>
                                     <input type="date" class="form-control" id="task1-start-date" name="date_debut" required>
+                                    <div class="invalid-feedback" id="date-debut-error"></div>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="task1-end-date">Date de Fin :</label>
                                     <input type="date" class="form-control" id="task1-end-date" name="date_fin" required>
+                                    <div class="invalid-feedback" id="date-fin-error"></div>
                                 </div>
                             </div>
                         </div>
@@ -181,5 +198,37 @@ if (isset($_POST['creer'])) {
     <script src="assets/js/bootstrap.js"></script>
     <script src="assets/js/bootstrap.bundle.js"></script>
     <script src="assets/js/index.js"></script>
+    <script>
+        $(document).ready(function() {
+            var today = new Date().toISOString().split('T')[0];
+            $('#task1-start-date').attr('min', today);
+            $('#task1-end-date').attr('min', today);
+
+            $('#task1-start-date').on('change', function() {
+                var dateDebut = $(this).val();
+                $('#task1-end-date').attr('min', dateDebut);
+            });
+
+            $('#project-form').on('submit', function(event) {
+                var dateDebut = $('#task1-start-date').val();
+                var dateFin = $('#task1-end-date').val();
+                var isValid = true;
+
+                $('#date-debut-error').text('');
+                $('#date-fin-error').text('');
+
+                if (dateFin <= dateDebut) {
+                    $('#date-fin-error').text('La date de fin doit être supérieure à la date de début.');
+                    isValid = false;
+                }
+
+                if (!isValid) {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
+
+
