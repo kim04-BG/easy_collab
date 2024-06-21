@@ -1,118 +1,153 @@
 <?php
-// Assurez-vous qu'aucune sortie n'est envoyée avant les en-têtes HTTP
-ob_start();
-include "connexiondb.php"; // Inclut le fichier de connexion à la base de données
 
-// Récupérer l'ID du projet depuis l'URL
-if (isset($_GET['id_projet'])) {
-    $id_projet = $_GET['id_projet'];
-} else {
-    // Rediriger ou afficher un message d'erreur si l'ID du projet est manquant
-    echo "ID du projet manquant.";
+include "connexiondb.php";
+
+if (!isset($_SESSION['id_utilisateur']) || !isset($_GET['id_projet'])) {
+    header("Location: connexion.php");
     exit();
 }
 
-// Récupérer les informations du projet
-$query_projet = "SELECT titre FROM projet WHERE id_projet = ?";
-$stmt = $conn->prepare($query_projet);
-if (!$stmt) {
-    die("Erreur de préparation de la requête : " . $conn->error);
-}
-$stmt->bind_param("i", $id_projet);
-$stmt->execute();
-$stmt->bind_result($titre_projet);
-$stmt->fetch();
-$stmt->close();
-
-// Récupérer les messages pour ce projet
-$query_messages = "
-    SELECT m.message, m.date_envoi, u.nom, u.prenom, m.id_utilisateur
-    FROM messages m
-    JOIN utilisateur u ON m.id_utilisateur = u.id_utilisateur
-    WHERE m.id_projet = ?
-    ORDER BY m.date_envoi ASC
-";
-$stmt = $conn->prepare($query_messages);
-$stmt->bind_param("i", $id_projet);
-$stmt->execute();
-$result_messages = $stmt->get_result();
-$messages = $result_messages->fetch_all(MYSQLI_ASSOC);
-$stmt->close();
-
-ob_end_flush();
+$id_utilisateur = $_SESSION['id_utilisateur'];
+$id_projet = $_GET['id_projet'];
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Messagerie</title>
     <link rel="icon" href="assets/img/favicon.png" type="image/x-icon">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/5.0.0/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/bootstrap.css">
-    <link rel="stylesheet" href="assets/css/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
-        .chat-box {
-            max-height: 500px;
+        body {
+            background-color: #f8f9fa;
+        }
+        .message-container {
+            height: 500px;
             overflow-y: scroll;
             padding: 10px;
-            border: 1px solid #ddd;
-            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            background-color: #fff;
         }
-        .message-received {
-            text-align: left;
-            background-color: #d1e7ff;
-            border-radius: 10px;
-            padding: 10px;
-            margin-bottom: 10px;
-            max-width: 80%;
+        .message {
+            margin-bottom: 15px;
         }
-        .message-sent {
+        .message.sent {
             text-align: right;
-            background-color: #ffdde1;
-            border-radius: 10px;
-            padding: 10px;
-            margin-bottom: 10px;
-            max-width: 80%;
-            margin-left: auto;
         }
-        .chat-input {
+        .message.received {
+            text-align: left;
+        }
+        .message .card {
+            display: inline-block;
+            max-width: 70%;
+            padding: 10px;
+            border-radius: 15px;
+        }
+        .message.sent .card {
+            background: linear-gradient(90deg, #f54ea2, #ff7676);
+            color: white;
+        }
+        .message.received .card {
+            background: linear-gradient(90deg, #02cb19, #0056b3);
+            color: white;
+        }
+        .input-group-append .btn-attachment {
+            border: none;
+            background: none;
+            font-size: 1.5em;
+            color: #007bff;
+            cursor: pointer;
+        }
+        .input-group-append .btn-send {
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
             display: flex;
-        }
-        .chat-input input {
-            flex: 1;
-            padding: 10px;
-        }
-        .chat-input button {
-            padding: 10px 20px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-<div class="container">
-        <h2 class="mt-4">Chat du projet</h2>
-        <div class="chat-box" id="chat-box">
-            <?php foreach ($messages as $message) : ?>
-                <div class="<?php echo $message['id_utilisateur'] == $id_utilisateur ? 'message-sent' : 'message-received'; ?>">
-                    <strong><?php echo htmlspecialchars($message['nom'] . ' ' . $message['prenom']); ?></strong><br>
-                    <small class="text-muted"><?php echo htmlspecialchars($message['date_envoi']); ?></small>
-                    <p><?php echo htmlspecialchars($message['message']); ?></p>
-                </div>
-            <?php endforeach; ?>
+<div class="container card card-body">
+    <h2 class="text-center">Messagerie du Projet</h2>
+    <div id="message-container" class="message-container"></div>
+    <form id="message-form" enctype="multipart/form-data">
+        <div class="input-group mt-3">
+            <input type="hidden" name="id_projet" value="<?php echo $id_projet; ?>">
+            <div class="input-group-append">
+            <label for="file-input" class="btn-attachment">
+                    <i class="fas fa-paperclip"></i>
+                </label>
+                <input type="file" id="file-input" name="fichier" accept=".zip,.rar,.7zip" style="display: none;">
+            </div>
+            
+            <input type="text" name="contenu" class="form-control" placeholder="Entrez votre message">
+            <div class="input-group-append">
+                
+                <button type="submit" class="btn-send">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
         </div>
-        <form id="chat-form" class="chat-input">
-            <input type="text" id="message" placeholder="Tapez votre message..." required>
-            <button type="submit" class="btn btn-primary">Envoyer</button>
-        </form>
-    </div>
+    </form>
+</div>
 
-    
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="assets/js/index.js"></script>
-    
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+<script>
+    $(document).ready(function() {
+        const id_projet = <?php echo $id_projet; ?>;
+        const id_utilisateur = <?php echo $id_utilisateur; ?>;
+
+        function loadMessages() {
+            $.get('recevoir_messages.php', {id_projet: id_projet}, function(data) {
+                const messages = JSON.parse(data);
+                const messageContainer = $('#message-container');
+                messageContainer.empty();
+                messages.forEach(message => {
+                    const messageClass = message.id_utilisateur == id_utilisateur ? 'sent' : 'received';
+                    messageContainer.append(`
+                        <div class="message ${messageClass}">
+                            <div><small>${message.nom} ${message.prenom}</small></div>
+                            <div class="card">
+                                
+                                <div>${message.contenu ? message.contenu : ''}</div>
+                                ${message.fichier ? `<div><a href="uploads/${message.fichier}" target="_blank">${message.fichier}</a></div>` : ''}
+                                <div><small><small>${message.date_envoi}</small></small></div>
+                            </div>
+                        </div>
+                    `);
+                });
+                messageContainer.scrollTop(messageContainer[0].scrollHeight);
+            });
+        }
+
+        $('#message-form').on('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            $.ajax({
+                url: 'envoyer_message.php',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(data) {
+                    loadMessages();
+                    $('#message-form')[0].reset();
+                }
+            });
+        });
+
+        loadMessages();
+        setInterval(loadMessages, 5000); // Rafraîchit les messages toutes les 5 secondes
+    });
+</script>
 </body>
 </html>

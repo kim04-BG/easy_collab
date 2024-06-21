@@ -205,12 +205,7 @@ $stmt->close();
                     <span class="menu-title">Boîte de reception</span>
                   </a>
                 </li>
-                <li class="nav-item">
-                  <a class="nav-link" data-bs-toggle="collapse" href="#charts" aria-expanded="false" aria-controls="charts">
-                    <i class="menu-icon mdi mdi-chart-line"></i>
-                    <span class="menu-title">Rapport</span>
-                  </a>
-                </li>
+                
                 
                 
                 

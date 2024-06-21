@@ -122,15 +122,15 @@ $stmt->close();
                   </a>
                   <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0" aria-labelledby="notificationDropdown">
                     <a class="dropdown-item py-3 border-bottom">
-                      <p class="mb-0 fw-medium float-start">You have 4 new notifications </p>
-                      <span class="badge badge-pill badge-primary float-end">View all</span>
+                      <p class="mb-0 fw-medium float-start">vous avez reçu 4 notifications </p>
+                      <span class="badge badge-pill badge-primary float-end">Voir tout</span>
                     </a>
                     <a class="dropdown-item preview-item py-3">
                       <div class="preview-thumbnail">
                         <i class="mdi mdi-alert m-auto text-primary"></i>
                       </div>
                       <div class="preview-item-content">
-                        <h6 class="preview-subject fw-normal text-dark mb-1">Application Error</h6>
+                        <h6 class="preview-subject fw-normal text-dark mb-1">Application Erreur</h6>
                         <p class="fw-light small-text mb-0"> Just now </p>
                       </div>
                     </a>
@@ -139,8 +139,8 @@ $stmt->close();
                         <i class="mdi mdi-lock-outline m-auto text-primary"></i>
                       </div>
                       <div class="preview-item-content">
-                        <h6 class="preview-subject fw-normal text-dark mb-1">Settings</h6>
-                        <p class="fw-light small-text mb-0"> Private message </p>
+                        <h6 class="preview-subject fw-normal text-dark mb-1">parametre</h6>
+                        <p class="fw-light small-text mb-0"> message privé </p>
                       </div>
                     </a>
                     <a class="dropdown-item preview-item py-3">
@@ -148,8 +148,8 @@ $stmt->close();
                         <i class="mdi mdi-airballoon m-auto text-primary"></i>
                       </div>
                       <div class="preview-item-content">
-                        <h6 class="preview-subject fw-normal text-dark mb-1">New user registration</h6>
-                        <p class="fw-light small-text mb-0"> 2 days ago </p>
+                        <h6 class="preview-subject fw-normal text-dark mb-1">nouveau utilisateur enregistré</h6>
+                        <p class="fw-light small-text mb-0"> 2 jours </p>
                       </div>
                     </a>
                   </div>
@@ -203,12 +203,6 @@ $stmt->close();
                   <a class="nav-link" href="message.php?id_projet=<?php echo $id_projet; ?>" aria-expanded="false" aria-controls="form-elements">
                     <i class="menu-icon fa fa-envelope"></i> 
                     <span class="menu-title">Boîte de reception</span>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" data-bs-toggle="collapse" href="#charts" aria-expanded="false" aria-controls="charts">
-                    <i class="menu-icon mdi mdi-chart-line"></i>
-                    <span class="menu-title">Rapport</span>
                   </a>
                 </li>
                 

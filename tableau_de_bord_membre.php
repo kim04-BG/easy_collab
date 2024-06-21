@@ -1,4 +1,4 @@
-    <?php
+<?php
     session_start(); // Démarrer la session
 
     ini_set('display_errors', 1);
@@ -235,7 +235,12 @@
                   </a>
                 </li>
                 <li class="nav-item nav-category">ÉLÉMENTS DE L’INTERFACE UTILISATEUR</li>
-                
+                <li class="nav-item">
+                  <a class="nav-link" data-bs-toggle="collapse" href="#charts" aria-expanded="false" aria-controls="charts">
+                    <i class="menu-icon mdi mdi-chart-line"></i>
+                    <span class="menu-title">Rapport</span>
+                  </a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link"  href="publication.php" aria-expanded="false" aria-controls="tables">
                       <i class="menu-icon mdi mdi-table"></i>
@@ -292,7 +297,7 @@
                             <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="#overview" role="tab" aria-controls="overview" aria-selected="true">Projets</a>
                           </li>
                           <li class="nav-item">
-                            <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="resumetache.php" role="tab" aria-selected="false"></a>
+                            <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="resumetache.php" role="tab" aria-selected="false">Message</a>
                           </li>
                           <li class="nav-item">
                             <a class="nav-link" id="contact-tab" data-bs-toggle="tab" href="#demographics" role="tab" aria-selected="false"></a>

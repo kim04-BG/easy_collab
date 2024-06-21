@@ -171,18 +171,8 @@ $stmt->close();
                 <li class="nav-item nav-category">ÉLÉMENTS DE L’INTERFACE UTILISATEUR</li>
                 
                 
-                <li class="nav-item">
-                  <a class="nav-link" href="message.php" aria-expanded="false" aria-controls="form-elements">
-                    <i class="menu-icon fa fa-envelope"></i> 
-                    <span class="menu-title">Boîte de reception</span>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" data-bs-toggle="collapse" href="#charts" aria-expanded="false" aria-controls="charts">
-                    <i class="menu-icon mdi mdi-chart-line"></i>
-                    <span class="menu-title">Rapport</span>
-                  </a>
-                </li>
+                
+                
                 
                 <li class="nav-item">
                     <a class="nav-link" href="publication.php" aria-expanded="false" aria-controls="tables">

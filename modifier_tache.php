@@ -12,7 +12,6 @@ if (isset($_GET['id']) && isset($_GET['id_projet'])) {
     exit();
 }
 
-
 $id_utilisateur = $_SESSION['id_utilisateur'];
 $id_projet = $_GET['id_projet'];
 
@@ -37,6 +36,8 @@ $stmt->bind_result($titre, $description, $date_debut, $date_fin, $statut_tache);
 $stmt->fetch();
 $stmt->close();
 
+$error_message = '';
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nouveau_titre = $_POST['titre'];
     $nouvelle_description = $_POST['description'];
@@ -44,21 +45,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nouvelle_date_fin = $_POST['date_fin'];
     $nouveau_statut = $_POST['statut_tache'];
 
-    $query_update = "UPDATE tache SET titre = ?, description = ?, date_debut = ?, date_fin = ?, statut_tache = ? WHERE id_tache = ?";
-    $stmt_update = $conn->prepare($query_update);
-    if (!$stmt_update) {
-        die("Erreur de préparation de la requête : " . $conn->error);
+    // Validation des dates
+    if ($nouvelle_date_debut < date('Y-m-d')) {
+        $error_message = "La date de début ne peut pas être antérieure à la date actuelle.";
+    } elseif ($nouvelle_date_fin <= $nouvelle_date_debut) {
+        $error_message = "La date de fin doit être supérieure à la date de début.";
     }
-    $stmt_update->bind_param("sssssi", $nouveau_titre, $nouvelle_description, $nouvelle_date_debut, $nouvelle_date_fin, $nouveau_statut, $id_tache);
-    if ($stmt_update->execute()) {
-        echo "<script>alert('Tâche modifiée avec succès.'); window.location.href='mestaches.php?id_projet=$id_projet';</script>";
+
+    if (empty($error_message)) {
+        $query_update = "UPDATE tache SET titre = ?, description = ?, date_debut = ?, date_fin = ?, statut_tache = ? WHERE id_tache = ?";
+        $stmt_update = $conn->prepare($query_update);
+        if (!$stmt_update) {
+            die("Erreur de préparation de la requête : " . $conn->error);
+        }
+        $stmt_update->bind_param("sssssi", $nouveau_titre, $nouvelle_description, $nouvelle_date_debut, $nouvelle_date_fin, $nouveau_statut, $id_tache);
+        if ($stmt_update->execute()) {
+            echo "<script>alert('Tâche modifiée avec succès.'); window.location.href='mestaches.php?id_projet=$id_projet';</script>";
+        } else {
+            echo "<script>alert('Erreur lors de la modification de la tâche.'); window.location.href='mestaches.php?id_projet=$id_projet';</script>";
+        }
+        $stmt_update->close();
+        exit();
     } else {
-        echo "<script>alert('Erreur lors de la modification de la tâche.'); window.location.href='mestaches.php?id_projet=$id_projet';</script>";
+        echo "<script>alert('$error_message');</script>";
     }
-    $stmt_update->close();
-    exit();
 }
 ?>
+
 
 
 <!DOCTYPE html>
@@ -94,56 +107,89 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body id="background" background="assets/img/B.jpg">
     <div class="container">
-        <h2 class="text-center"><B><?php echo htmlspecialchars($titre_projet); ?></B></h2><br>
-            <div class="card form">
-                <div class="card-header bg-gradient-rose-red text-white">
-                    MODIFIER LES TACHES
-                </div>
-                <div class="">
-                <div class="card-body">
-                <form method="POST">
-                    <div class="form-group">
-                        <label for="titre">Titre</label>
-                        <input type="text" class="form-control" id="titre" name="titre" value="<?php echo htmlspecialchars($titre); ?>" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="description">Description</label>
-                        <textarea class="form-control" id="description" name="description" required><?php echo htmlspecialchars($description); ?></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="date_debut">Date de début</label>
-                        <input type="date" class="form-control" id="date_debut" name="date_debut" value="<?php echo htmlspecialchars($date_debut); ?>" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="date_fin">Date de fin</label>
-                        <input type="date" class="form-control" id="date_fin" name="date_fin" value="<?php echo htmlspecialchars($date_fin); ?>" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="statut_tache">Statut</label>
-                        <select class="form-control" id="statut_tache" name="statut_tache" required>
-                            <option value="en_attente" <?php echo $statut_tache == 'en_attente' ? 'selected' : ''; ?>>En attente</option>
-                            <option value="en_cours" <?php echo $statut_tache == 'en_cours' ? 'selected' : ''; ?>>En cours</option>
-                            <option value="termine" <?php echo $statut_tache == 'termine' ? 'selected' : ''; ?>>Terminé</option>
-                        </select>
-                    </div>
-                    <div class="text-center">
-                        <div class="row">
-                            <div class="col-2"></div>
-                            <div class="col-4">
-                                <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
-                            </div>
-                            <div class="col-4">
-                                <a href="mestaches.php?id_projet=<?php echo $id_projet; ?>" class="btn btn-secondary">Annuler</a>
-                            </div>
-                            <div class="col-2"></div>
-                        </div>
-                    </div>
-                    
-                </form>
-                </div>
-                </div>
-                
+        <h2 class="text-center"><b><?php echo htmlspecialchars($titre_projet); ?></b></h2><br>
+        <div class="card form">
+            <div class="card-header bg-gradient-rose-red text-white">
+                MODIFIER LES TACHES
             </div>
+            <div class="">
+                <div class="card-body">
+                    <form method="POST" id="task-form">
+                        <div class="form-group">
+                            <label for="titre">Titre</label>
+                            <input type="text" class="form-control" id="titre" name="titre" value="<?php echo htmlspecialchars($titre); ?>" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea class="form-control" id="description" name="description" required><?php echo htmlspecialchars($description); ?></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="date_debut">Date de début</label>
+                            <input type="date" class="form-control" id="date_debut" name="date_debut" value="<?php echo htmlspecialchars($date_debut); ?>" required>
+                            <span id="date-debut-error" class="text-danger" style="display:none;"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="date_fin">Date de fin</label>
+                            <input type="date" class="form-control" id="date_fin" name="date_fin" value="<?php echo htmlspecialchars($date_fin); ?>" required>
+                            <span id="date-fin-error" class="text-danger" style="display:none;"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="statut_tache">Statut</label>
+                            <select class="form-control" id="statut_tache" name="statut_tache" required>
+                                <option value="en_attente" <?php echo $statut_tache == 'en_attente' ? 'selected' : ''; ?>>En attente</option>
+                                <option value="en_cours" <?php echo $statut_tache == 'en_cours' ? 'selected' : ''; ?>>En cours</option>
+                                <option value="termine" <?php echo $statut_tache == 'termine' ? 'selected' : ''; ?>>Terminé</option>
+                            </select>
+                        </div>
+                        <div class="text-center">
+                            <div class="row">
+                                <div class="col-2"></div>
+                                <div class="col-4">
+                                    <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                                </div>
+                                <div class="col-4">
+                                    <a href="mestaches.php?id_projet=<?php echo $id_projet; ?>" class="btn btn-secondary">Annuler</a>
+                                </div>
+                                <div class="col-2"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var today = new Date().toISOString().split('T')[0];
+            $('#date_debut').attr('min', today);
+            $('#date_fin').attr('min', today);
+
+            $('#task-form').on('submit', function(event) {
+                var dateDebut = $('#date_debut').val();
+                var dateFin = $('#date_fin').val();
+                var isValid = true;
+
+                if (dateDebut < today) {
+                    $('#date-debut-error').text('La date de début ne peut pas être antérieure à la date actuelle.').show();
+                    isValid = false;
+                } else {
+                    $('#date-debut-error').hide();
+                }
+
+                if (dateFin <= dateDebut) {
+                    $('#date-fin-error').text('La date de fin doit être supérieure à la date de début.').show();
+                    isValid = false;
+                } else {
+                    $('#date-fin-error').hide();
+                }
+
+                if (!isValid) {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
