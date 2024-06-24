@@ -98,27 +98,21 @@ $conn->close();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body id="background" background="">
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light">
-            <a class="navbar-brand" href="acceuil.html">
-                <img src="assets/img/LOGO.png" alt="Logo de la plateforme" height="30">
-                <B>EASYCOLLAB</B>
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="connexion.html">Connexion</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="inscription.html">Inscription</a>
-                    </li>
-                </ul>
+        <header>
+            <div class="row">
+                <div class="col-4"></div>
+                <div class="col-4">
+                    <nav class="navbar navbar-expand-lg navbar-light">
+                    <a class="navbar-brand" href="acceuil.html">
+                        <img src="assets/img/LOGO.png" alt="Logo de la plateforme" height="30">
+                        <b>EASYCOLLAB</b>
+                    </a>   
+                    </nav>
+                </div>
+                <div class="col-4"></div>
             </div>
-        </nav>
-    </header>
+            
+        </header>
 
     <section id="c-pro">
         <div class="">

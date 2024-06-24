@@ -39,8 +39,24 @@
     $result_projets = $stmt_projets->get_result();
     $projets = $result_projets->fetch_all(MYSQLI_ASSOC);
     $stmt_projets->close();
+
+    // Récupération des projets où l'utilisateur est membre mais pas le créateur
+$query_projets_membre = "
+SELECT p.id_projet, p.titre, p.description, p.date_debut, p.date_fin, p.statut_projet, m.libelle AS libelle_methode 
+FROM projet p 
+JOIN methode m ON p.id_methode = m.id_methode 
+JOIN equipe e ON p.id_projet = e.id_projet 
+WHERE e.id_utilisateur = ? AND p.id_chef != ?";
+$stmt_projets_membre = $conn->prepare($query_projets_membre);
+$stmt_projets_membre->bind_param("ii", $id_utilisateur, $id_utilisateur);
+$stmt_projets_membre->execute();
+$result_projets_membre = $stmt_projets_membre->get_result();
+$projets_membre = $result_projets_membre->fetch_all(MYSQLI_ASSOC);
+$stmt_projets_membre->close();
     $conn->close();
 
+
+    
 
     ?>
 
@@ -261,6 +277,28 @@
                         </ul>
                       
                       </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#form-elements" aria-expanded="false" aria-controls="form-elements">
+                        <i class="menu-icon mdi mdi-card-text-outline"></i>
+                        <span class="menu-title">Projet Associer</span>
+                        <i class="menu-arrow"></i>
+                    </a>
+                    <div class="collapse" id="form-elements">
+                        <ul class="nav flex-column sub-menu">
+                            <?php if (count($projets_membre) > 0): ?>
+                                <?php foreach ($projets_membre as $projet): ?>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="equipeM.php?id_projet=<?php echo $projet['id_projet']; ?>">
+                                            <?php echo htmlspecialchars($projet['titre']); ?>
+                                        </a>
+                                    </li>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <li class="nav-item"><a class="nav-link" href="#">Aucun projet associé</a></li>
+                            <?php endif; ?>
+                        </ul>
+                    </div>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" data-bs-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">

@@ -2,6 +2,13 @@
 session_start();
 include "connexiondb.php";
 
+$upload_dir = "uploads";
+
+// Vérifie si le répertoire existe, sinon le crée
+if (!is_dir($upload_dir)) {
+    mkdir($upload_dir, 0755, true);
+}
+
 if (!isset($_SESSION['id_utilisateur'])) {
     echo json_encode(["status" => "error", "message" => "Non connecté"]);
     exit();
@@ -9,8 +16,14 @@ if (!isset($_SESSION['id_utilisateur'])) {
 
 $id_utilisateur = $_SESSION['id_utilisateur'];
 $id_projet = $_POST['id_projet'];
-$contenu = isset($_POST['contenu']) ? $_POST['contenu'] : '';
+$contenu = isset($_POST['contenu']) ? trim($_POST['contenu']) : '';
 $fichier = '';
+
+// Vérifie qu'un message ou un fichier a été fourni
+if (empty($contenu) && empty($_FILES['fichier']['name'])) {
+    echo json_encode(["status" => "error", "message" => "Veuillez entrer un message ou sélectionner un fichier."]);
+    exit();
+}
 
 if (!empty($_FILES['fichier']['name'])) {
     $target_dir = "uploads/";

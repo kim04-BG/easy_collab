@@ -1,5 +1,4 @@
 <?php
-
 include "connexiondb.php";
 
 if (!isset($_SESSION['id_utilisateur']) || !isset($_GET['id_projet'])) {
@@ -18,7 +17,11 @@ $id_projet = $_GET['id_projet'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Messagerie</title>
     <link rel="icon" href="assets/img/favicon.png" type="image/x-icon">
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/5.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/bootstrap.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
             background-color: #f8f9fa;
@@ -26,15 +29,16 @@ $id_projet = $_GET['id_projet'];
         .message-container {
             height: 500px;
             overflow-y: scroll;
-            padding: 10px;
-            border: 1px solid #ccc;
-            background-color: #fff;
+            padding: 80px;
+            
+           
         }
         .message {
             margin-bottom: 15px;
         }
         .message.sent {
             text-align: right;
+            
         }
         .message.received {
             text-align: left;
@@ -42,12 +46,16 @@ $id_projet = $_GET['id_projet'];
         .message .card {
             display: inline-block;
             max-width: 70%;
-            padding: 10px;
-            border-radius: 15px;
+            padding: 5px;
+            border-radius: 20px;
+            margin-bottom: -10px; 
+            
         }
         .message.sent .card {
             background: linear-gradient(90deg, #f54ea2, #ff7676);
             color: white;
+            margin-left: auto;
+            
         }
         .message.received .card {
             background: linear-gradient(90deg, #02cb19, #0056b3);
@@ -66,37 +74,76 @@ $id_projet = $_GET['id_projet'];
             border: none;
             border-radius: 50%;
             width: 40px;
-            height: 40px;
+            height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            
+        }
+        .icon-circle {
+            width: 40px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            
+            justify-content: center;
+            
+            color: white;
+            cursor: pointer;
+        }
+        .icon-circle i {
+            font-size: 1.2em;
         }
     </style>
+    <script>
+        function validateForm(event) {
+            var messageInput = document.getElementById("contenu");
+            var fileInput = document.getElementById("fichier");
+
+            if (messageInput.value.trim() === "" && fileInput.files.length === 0) {
+                ("Veuillez entrer un message ou sélectionner un fichier.");
+                event.preventDefault();
+                return false;
+            }
+        }
+
+        function updateFileName() {
+            var fileInput = document.getElementById("fichier");
+            var fileNameDisplay = document.getElementById("file-name-display");
+            if (fileInput.files.length > 0) {
+                fileNameDisplay.textContent = fileInput.files[0].name;
+            } else {
+                fileNameDisplay.textContent = "";
+            }
+        }
+    </script>
 </head>
 <body>
-<div class="container card card-body">
+<div class="container">
     <h2 class="text-center">Messagerie du Projet</h2>
     <div id="message-container" class="message-container"></div>
-    <form id="message-form" enctype="multipart/form-data">
-        <div class="input-group mt-3">
-            <input type="hidden" name="id_projet" value="<?php echo $id_projet; ?>">
-            <div class="input-group-append">
-            <label for="file-input" class="btn-attachment">
-                    <i class="fas fa-paperclip"></i>
-                </label>
-                <input type="file" id="file-input" name="fichier" accept=".zip,.rar,.7zip" style="display: none;">
-            </div>
-            
-            <input type="text" name="contenu" class="form-control" placeholder="Entrez votre message">
-            <div class="input-group-append">
+    <form id="message-form" action="envoyer_message.php" method="POST" enctype="multipart/form-data" onsubmit="validateForm(event)">
+        <div class="row">
+            <div class="col-2"></div>
+            <div class="col-8">
+                <div class="input-group" style="width: 500px; margin-right: 50px">
+                        <label class="input-group-text icon-circle" for="fichier"><i class="fas fa-paperclip"></i></label>
+                        <input type="file" class="d-none" id="fichier" name="fichier" accept=".zip,.rar,.7z"  onchange="updateFileName()">
                 
-                <button type="submit" class="btn-send">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
+                    <input type="hidden" name="id_projet" value="<?php echo $id_projet; ?>">
+                    <textarea class="form-control" id="contenu" name="contenu" placeholder="Écrire un message..." style="height: 50px;"></textarea>
+                    
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary icon-circle"><i class="fas fa-arrow-circle-up"></i></button>
+                    </div>
+                </div>
             </div>
+            <div class="col-2"></div>
         </div>
-    </form>
+            
+            <div id="file-name-display" style="margin-top: 3px;"></div>
+        </form>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -129,6 +176,11 @@ $id_projet = $_GET['id_projet'];
             });
         }
 
+        $('#file-input').on('change', function() {
+            const fileName = this.files[0].name;
+            $('#file-name').text(`Fichier sélectionné : ${fileName}`);
+        });
+
         $('#message-form').on('submit', function(event) {
             event.preventDefault();
             const formData = new FormData(this);
@@ -141,6 +193,7 @@ $id_projet = $_GET['id_projet'];
                 success: function(data) {
                     loadMessages();
                     $('#message-form')[0].reset();
+                    $('#file-name').text('');
                 }
             });
         });

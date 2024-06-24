@@ -76,6 +76,21 @@ if (isset($_POST['ajouter_equipe'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body id="background" background="">
+        <header>
+            <div class="row">
+                <div class="col-4"></div>
+                <div class="col-4">
+                    <nav class="navbar navbar-expand-lg navbar-light">
+                    <a class="navbar-brand" href="acceuil.html">
+                        <img src="assets/img/LOGO.png" alt="Logo de la plateforme" height="30">
+                        <b>EASYCOLLAB</b>
+                    </a>   
+                    </nav>
+                </div>
+                <div class="col-4"></div>
+            </div>
+            
+        </header>
 
 <section id="c-pro">
     <div class="">

@@ -75,34 +75,34 @@ $message_bienvenue = "Bienvenue sur EASYCOLLAB $prenom_utilisateur $nom_utilisat
   </head>
   <body>
 
-    <div class="container-scroller bien">
-      <div class="container-fluid page-body-wrapper full-page-wrapper">
+  <div class="container-scroller bien">
+    <div class="container-fluid page-body-wrapper full-page-wrapper">
         <div class="content-wrapper d-flex align-items-center text-center error-page bien">
-          <div class="row flex-grow">
-            <div class="col-lg-7 mx-auto ">
-              <section id="c-pro">
-                <div class="">
-                  <img src="assets/img/LOGO.png" alt="Logo de la plateforme" height="50" style="margin-top: -10%;">
-                  <h3 class="primary-text mb-2" style="font-size: 300%; font-family: High Tower Text;"><?php echo $message_bienvenue; ?></h3>
-                  <p class="lead">Lancez-vous dans la création de votre projet avec facilité et inspiration</p>
+            <div class="row flex-grow">
+                <div class="col-lg-7 mx-auto ">
+                    <section id="c-pro">
+                        <div class="">
+                            <img src="assets/img/LOGO.png" alt="Logo de la plateforme" height="50" style="margin-top: -10%;">
+                            <h3 class="primary-text mb-2" style="font-size: 300%; font-family: High Tower Text;"><?php echo $message_bienvenue; ?></h3>
+                            <p class="lead">Lancez-vous dans la création de votre projet avec facilité et inspiration</p>
+                        </div>
+                    </section>
                 </div>
-              </section>
-              
-              </div>
-              <div class="row mt-5">
-                <div class="col-3  mt-xl-2"></div>
-                <div class="col-6  mt-xl-2">
-                  <a href="<?php echo $tableau_de_bord_url; ?>" class="btn btn-primary" role="button">Accéder au Tableau de Bord</a>
+                <div class="row mt-5">
+                    <div class="col-3  mt-xl-2"></div>
+                    <div class="col-6  mt-xl-2">
+                        <!-- Rediriger directement vers le tableau de bord du chef de projet -->
+                        <a href="tableau_de_bord_chef.php" class="btn btn-primary" role="button">Accéder au Tableau de Bord</a>
+                    </div>
+                    <div class="col-3  mt-xl-2"></div>
                 </div>
-                <div class="col-3  mt-xl-2"></div>
-              </div>
             </div>
-          </div>
         </div>
         <!-- content-wrapper ends -->
-      </div>
-      <!-- page-body-wrapper ends -->
     </div>
+    <!-- page-body-wrapper ends -->
+</div>
+
     <!-- container-scroller -->
     <!-- plugins:js -->
     <script src="assets/vendors/js/vendor.bundle.base.js"></script>

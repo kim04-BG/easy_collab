@@ -72,25 +72,19 @@ if (isset($_POST['creer'])) {
 <body id="background">
     <div id="page1" class="page active">
         <header>
-            <nav class="navbar navbar-expand-lg navbar-light">
-                <a class="navbar-brand" href="acceuil.html">
-                    <img src="assets/img/LOGO.png" alt="Logo de la plateforme" height="30">
-                    <b>EASYCOLLAB</b>
-                </a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="connexion.php">Connexion</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="inscription.php">Inscription</a>
-                        </li>
-                    </ul>
+            <div class="row">
+                <div class="col-4"></div>
+                <div class="col-4">
+                    <nav class="navbar navbar-expand-lg navbar-light">
+                    <a class="navbar-brand" href="acceuil.html">
+                        <img src="assets/img/LOGO.png" alt="Logo de la plateforme" height="30">
+                        <b>EASYCOLLAB</b>
+                    </a>   
+                    </nav>
                 </div>
-            </nav>
+                <div class="col-4"></div>
+            </div>
+            
         </header>
 
         <section id="c-pro">
