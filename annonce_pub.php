@@ -74,7 +74,7 @@ foreach ($demandes as $demande) {
                                     <a href="demander_adhesion.php?id_publication=<?php echo $publication['id_publication']; ?>" class="btn btn-primary">Demander à rejoindre</a>
                                 <?php endif; ?>
                             <?php else: ?>
-                                <p class="card-text"><em>Vous êtes le créateur de cette publication</em></p>
+                                <p class="card-text"><em>Vous avez créer cette publication</em></p>
                             <?php endif; ?>
                         </div>
                     </div>
