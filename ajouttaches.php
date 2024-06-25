@@ -201,7 +201,15 @@ $conn->close();
                 </div>
                 <div class="card"> 
                     <!-- Tableau illustrant l'aperçu des tâches -->
+                    <img src="assets/img/T0.jpg" alt="">
+                </div>
+                <div class="card"> 
+                    <!-- Tableau illustrant l'aperçu des tâches -->
                     <img src="assets/img/tache.jpg" alt="">
+                </div>
+                <div class="card"> 
+                    <!-- Tableau illustrant l'aperçu des tâches -->
+                    <img src="assets/img/T0.jpg" alt="">
                 </div>
             </div>
         </div>

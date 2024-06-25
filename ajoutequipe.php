@@ -34,7 +34,6 @@ $stmt->close();
 
 if (isset($_POST['ajouter_equipe'])) {
     $id_chef = $id_utilisateur;
-    $id_ass = $id_membre;
 
     $membres = array_filter([
         $_POST['id_membre1'] ?? null,
@@ -44,6 +43,7 @@ if (isset($_POST['ajouter_equipe'])) {
 
     $stmt = $conn->prepare("INSERT INTO equipe (id_projet, id_utilisateur, id_chef, id_ass) VALUES (?, ?, ?, ?)");
     foreach ($membres as $id_membre) {
+          // Correction ici : Assigner l'identifiant de l'assistant pour chaque membre
         $stmt->bind_param("iiii", $id_projet, $id_membre, $id_chef, $id_ass);
         if (!$stmt->execute()) {
             echo '<script>alert("Erreur lors de l\'ajout de l\'équipe : ' . $stmt->error . '");</script>';
@@ -130,8 +130,11 @@ if (isset($_POST['ajouter_equipe'])) {
         </div>
         <div class="col-md-6">
             <h2>Aperçu de la Collaboration</h2>
-            <div class="chat-preview">
-                <img src="assets/img/chat.png" alt="">
+            <div class="card">
+                <img src="assets/img/EQUIPE.jpg" alt="">
+            </div>
+            <div class="card">
+                <img src="assets/img/E0.jpg" alt="">
             </div>
         </div>
     </div>

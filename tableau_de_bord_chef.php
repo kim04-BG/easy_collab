@@ -228,8 +228,7 @@ $stmt_projets_membre->close();
                                 <p class="mb-1 mt-3 fw-semibold"><?php echo htmlspecialchars($prenom . ' ' . $nom); ?></p>
                                 <p class="fw-light text-muted mb-0"><?php echo htmlspecialchars($email); ?></p>
                             </div>
-                            <a class="dropdown-item" href=""><i class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i> Mon Profil </a>
-                            <a class="dropdown-item" href=""><i class="dropdown-item-icon mdi mdi-message-text-outline text-primary me-2"></i> Messages <span class="badge badge-pill badge-danger">2</span></a>
+                            <a class="dropdown-item" href="profil.php"><i class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i> Mon Profil </a>
                             <a class="dropdown-item" href="deconnexion.php"><i class="dropdown-item-icon mdi mdi-power text-primary me-2"></i>Déconnexion</a>
                         </div>
                     </li>
@@ -301,20 +300,11 @@ $stmt_projets_membre->close();
                     </div>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" data-bs-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
+                  <a class="nav-link"  href="profil.php" aria-expanded="false" aria-controls="auth">
                     <i class="menu-icon mdi mdi-account-circle-outline"></i>
-                    <span class="menu-title">User Pages</span>
-                    <i class="menu-arrow"></i>
+                    <span class="menu-title">Mon Profil</span>
+                    
                   </a>
-                  <div class="collapse" id="auth">
-                    <ul class="nav flex-column sub-menu">
-                      <li class="nav-item"> <a class="nav-link" href="pages/samples/blank-page.html"> Blank Page </a></li>
-                      <li class="nav-item"> <a class="nav-link" href="pages/samples/error-404.html"> 404 </a></li>
-                      <li class="nav-item"> <a class="nav-link" href="pages/samples/error-500.html"> 500 </a></li>
-                      <li class="nav-item"> <a class="nav-link" href="pages/samples/login.html"> Login </a></li>
-                      <li class="nav-item"> <a class="nav-link" href="pages/samples/register.html"> Register </a></li>
-                    </ul>
-                  </div>
                 </li>
               </ul>
             </nav>

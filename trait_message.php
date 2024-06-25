@@ -34,7 +34,7 @@ $id_projet = $_GET['id_projet'];
            
         }
         .message {
-            margin-bottom: 15px;
+            margin-bottom: 0px;
         }
         .message.sent {
             text-align: right;
@@ -47,7 +47,7 @@ $id_projet = $_GET['id_projet'];
             display: inline-block;
             max-width: 70%;
             padding: 5px;
-            border-radius: 20px;
+            border-radius: 10px;
             margin-bottom: -10px; 
             
         }

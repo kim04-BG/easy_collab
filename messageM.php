@@ -188,17 +188,12 @@ $stmt->close();
                 </li>
                 <li class="nav-item nav-category">ÉLÉMENTS DE L’INTERFACE UTILISATEUR</li>
                 <li class="nav-item">
-                        <a class="nav-link" href="equipe.php?id_projet=<?php echo $id_projet; ?>" aria-expanded="false" aria-controls="tables">
-                            <i class="menu-icon fa fa-group"></i>
+                        <a class="nav-link" href="equipeM.php?id_projet=<?php echo $id_projet; ?>" aria-expanded="false" aria-controls="tables">
+                        <i class="menu-icon fa fa-group"></i>
                             <span class="menu-title">Equipe</span>
                         </a>
                 </li>
-                <li class="nav-item">
-                  <a class="nav-link"  href="mestaches.php?id_projet=<?php echo $id_projet; ?>" aria-expanded="false" aria-controls="ui-basic">
-                    <i class="menu-icon mdi mdi-floor-plan"></i>
-                    <span class="menu-title">Mes Tâches</span>
-                  </a>
-                </li>
+                
                 <li class="nav-item">
                   <a class="nav-link" href="message.php?id_projet=<?php echo $id_projet; ?>" aria-expanded="false" aria-controls="form-elements">
                     <i class="menu-icon fa fa-envelope"></i> 
@@ -208,13 +203,21 @@ $stmt->close();
                 
                 
                 
-                
                 <li class="nav-item">
-                  <a class="nav-link"  href="profil.php" aria-expanded="false" aria-controls="auth">
+                  <a class="nav-link" data-bs-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
                     <i class="menu-icon mdi mdi-account-circle-outline"></i>
-                    <span class="menu-title">Mon Profil</span>
-                    
+                    <span class="menu-title">User Pages</span>
+                    <i class="menu-arrow"></i>
                   </a>
+                  <div class="collapse" id="auth">
+                    <ul class="nav flex-column sub-menu">
+                      <li class="nav-item"> <a class="nav-link" href="pages/samples/blank-page.html"> Blank Page </a></li>
+                      <li class="nav-item"> <a class="nav-link" href="pages/samples/error-404.html"> 404 </a></li>
+                      <li class="nav-item"> <a class="nav-link" href="pages/samples/error-500.html"> 500 </a></li>
+                      <li class="nav-item"> <a class="nav-link" href="pages/samples/login.html"> Login </a></li>
+                      <li class="nav-item"> <a class="nav-link" href="pages/samples/register.html"> Register </a></li>
+                    </ul>
+                  </div>
                 </li>
               </ul>
               
@@ -227,7 +230,7 @@ $stmt->close();
                 <div class="row">
                     <div class="tab-pane fade show active" id="resumetache" role="tabpanel" aria-labelledby="profile-tab">
                                 <!-- Contenu de l'onglet Tableau de bord -->
-                                <?php include "resumetache.php"; ?> <!-- Intégration de la page resumetache.php -->
+                                <?php include "trait_message.php"; ?> <!-- Intégration de la page resumetache.php -->
                     </div>
 
                 </div>

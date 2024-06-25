@@ -39,8 +39,24 @@
     $result_projets = $stmt_projets->get_result();
     $projets = $result_projets->fetch_all(MYSQLI_ASSOC);
     $stmt_projets->close();
+
+    // Récupération des projets où l'utilisateur est membre mais pas le créateur
+$query_projets_membre = "
+SELECT p.id_projet, p.titre, p.description, p.date_debut, p.date_fin, p.statut_projet, m.libelle AS libelle_methode 
+FROM projet p 
+JOIN methode m ON p.id_methode = m.id_methode 
+JOIN equipe e ON p.id_projet = e.id_projet 
+WHERE e.id_utilisateur = ? AND p.id_chef != ?";
+$stmt_projets_membre = $conn->prepare($query_projets_membre);
+$stmt_projets_membre->bind_param("ii", $id_utilisateur, $id_utilisateur);
+$stmt_projets_membre->execute();
+$result_projets_membre = $stmt_projets_membre->get_result();
+$projets_membre = $result_projets_membre->fetch_all(MYSQLI_ASSOC);
+$stmt_projets_membre->close();
     $conn->close();
 
+
+    
 
     ?>
 
@@ -212,8 +228,7 @@
                                 <p class="mb-1 mt-3 fw-semibold"><?php echo htmlspecialchars($prenom . ' ' . $nom); ?></p>
                                 <p class="fw-light text-muted mb-0"><?php echo htmlspecialchars($email); ?></p>
                             </div>
-                            <a class="dropdown-item" href=""><i class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i> Mon Profil </a>
-                            <a class="dropdown-item" href=""><i class="dropdown-item-icon mdi mdi-message-text-outline text-primary me-2"></i> Messages <span class="badge badge-pill badge-danger">2</span></a>
+                            <a class="dropdown-item" href="profil.phhp"><i class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i> Mon Profil </a>
                             <a class="dropdown-item" href="deconnexion.php"><i class="dropdown-item-icon mdi mdi-power text-primary me-2"></i>Déconnexion</a>
                         </div>
                     </li>
@@ -235,12 +250,7 @@
                   </a>
                 </li>
                 <li class="nav-item nav-category">ÉLÉMENTS DE L’INTERFACE UTILISATEUR</li>
-                <li class="nav-item">
-                  <a class="nav-link" data-bs-toggle="collapse" href="#charts" aria-expanded="false" aria-controls="charts">
-                    <i class="menu-icon mdi mdi-chart-line"></i>
-                    <span class="menu-title">Rapport</span>
-                  </a>
-                </li>
+                
                 <li class="nav-item">
                     <a class="nav-link"  href="publication.php" aria-expanded="false" aria-controls="tables">
                       <i class="menu-icon mdi mdi-table"></i>
@@ -268,20 +278,33 @@
                       </div>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" data-bs-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#form-elements" aria-expanded="false" aria-controls="form-elements">
+                        <i class="menu-icon mdi mdi-card-text-outline"></i>
+                        <span class="menu-title">Projet Associer</span>
+                        <i class="menu-arrow"></i>
+                    </a>
+                    <div class="collapse" id="form-elements">
+                        <ul class="nav flex-column sub-menu">
+                            <?php if (count($projets_membre) > 0): ?>
+                                <?php foreach ($projets_membre as $projet): ?>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="equipeM.php?id_projet=<?php echo $projet['id_projet']; ?>">
+                                            <?php echo htmlspecialchars($projet['titre']); ?>
+                                        </a>
+                                    </li>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <li class="nav-item"><a class="nav-link" href="#">Aucun projet associé</a></li>
+                            <?php endif; ?>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link"  href="profil.php" aria-expanded="false" aria-controls="auth">
                     <i class="menu-icon mdi mdi-account-circle-outline"></i>
-                    <span class="menu-title">User Pages</span>
-                    <i class="menu-arrow"></i>
+                    <span class="menu-title">Mon Profil</span>
+                    
                   </a>
-                  <div class="collapse" id="auth">
-                    <ul class="nav flex-column sub-menu">
-                      <li class="nav-item"> <a class="nav-link" href="pages/samples/blank-page.html"> Blank Page </a></li>
-                      <li class="nav-item"> <a class="nav-link" href="pages/samples/error-404.html"> 404 </a></li>
-                      <li class="nav-item"> <a class="nav-link" href="pages/samples/error-500.html"> 500 </a></li>
-                      <li class="nav-item"> <a class="nav-link" href="pages/samples/login.html"> Login </a></li>
-                      <li class="nav-item"> <a class="nav-link" href="pages/samples/register.html"> Register </a></li>
-                    </ul>
-                  </div>
                 </li>
               </ul>
             </nav>
@@ -294,10 +317,10 @@
                       <div class="d-sm-flex align-items-center justify-content-between border-bottom">
                         <ul class="nav nav-tabs" role="tablist">
                           <li class="nav-item">
-                            <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="#overview" role="tab" aria-controls="overview" aria-selected="true">Projets</a>
+                            <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="#overview" role="tab" aria-controls="overview" aria-selected="true">Profil</a>
                           </li>
                           <li class="nav-item">
-                            <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="resumetache.php" role="tab" aria-selected="false">Message</a>
+                            <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="resumetache.php" role="tab" aria-selected="false"></a>
                           </li>
                           <li class="nav-item">
                             <a class="nav-link" id="contact-tab" data-bs-toggle="tab" href="#demographics" role="tab" aria-selected="false"></a>
@@ -312,49 +335,7 @@
                       
                       <div class="tab-content tab-content-basic">
                         <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview">
-                          <div class="row">
-                              <h4 class="card-title" style="margin-bottom: 3%;">Mes Projets</h4>
-                              <?php
-                              $color_classes = ['card-color-1', 'card-color-2', 'card-color-3', 'card-color-4', 'card-color-5'];
-                              $index = 0;
-                              foreach ($projets as $projet) :
-                                  $color_class = $color_classes[$index % count($color_classes)];
-                                  $index++;
-                              ?>
-                                  <div class="col-md-4 mb-4">
-                                      <div class="card <?php echo $color_class; ?>">
-                                          <div class="card-body">
-                                              <h3 class=""><?php echo htmlspecialchars($projet['titre']); ?></h3>  
-                                          </div>
-                                      </div>
-                                  </div>
-                              <?php endforeach; ?>
-                          </div>
-
-                          <div class="row">
-                              <h4 class="card-title" style="margin-bottom: 3%;">Détails des Projets</h4>
-                              <?php
-                              $color_classes = ['card-color-1', 'card-color-2', 'card-color-3', 'card-color-4', 'card-color-5', 'card-color-6', 'card-color-7'];
-                              $index = 0;
-                              foreach ($projets as $projet) :
-                                  $color_class = $color_classes[$index % count($color_classes)];
-                                  $index++;
-                              ?>
-                                  <div class="col-md-6 mb-4">
-                                      <div class="card <?php echo $color_class; ?>" style="position: relative;">
-                                          <div class="card-body">
-                                              <h3 class="" ><B><?php echo htmlspecialchars($projet['titre']); ?></B></h3>
-                                              <p class="card-text"><strong>Description: </strong><?php echo htmlspecialchars($projet['description']); ?></p>
-                                              <p class="card-text"><strong>Date de début: </strong><?php echo htmlspecialchars($projet['date_debut']); ?></p>
-                                              <p class="card-text"><strong>Date de fin: </strong><?php echo htmlspecialchars($projet['date_fin']); ?></p>
-                                              <p class="card-text"><strong>Statut: </strong><?php echo htmlspecialchars($projet['statut_projet']); ?></p>
-                                              <p class="card-text"><strong>Méthode: </strong><?php echo htmlspecialchars($projet['libelle_methode']); ?></p>
-                                              <a href="modifier_projet.php?id_projet=<?php echo $projet['id_projet']; ?>" class="btn btn-primary btn-edit">Modifier</a>
-                                          </div>
-                                      </div>
-                                  </div>
-                              <?php endforeach; ?>
-                          </div>
+                        <?php include "mon_profil.php"; ?>
 
                         </div>
                         <div class="tab-pane fade show active" id="resumetache" role="tabpanel" aria-labelledby="profile-tab">

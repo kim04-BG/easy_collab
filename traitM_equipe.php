@@ -29,6 +29,15 @@ $stmt->execute();
 $stmt->bind_result($nom_chef, $prenom_chef);
 $stmt->fetch();
 $stmt->close();
+
+// Récupérer les tâches assignées à l'utilisateur dans ce projet
+$query_taches = "SELECT id_tache, titre, description, date_debut, date_fin, statut_tache FROM tache WHERE id_projet = ? AND id_utilisateur = ?";
+$stmt_taches = $conn->prepare($query_taches);
+$stmt_taches->bind_param("ii", $id_projet, $id_utilisateur);
+$stmt_taches->execute();
+$result_taches = $stmt_taches->get_result();
+$taches = $result_taches->fetch_all(MYSQLI_ASSOC);
+$stmt_taches->close();
 ?>
 
 <!DOCTYPE html>
@@ -58,6 +67,10 @@ $stmt->close();
         }
         .table thead th {
             background-color: darkgray;
+            color: white;
+        }
+        .A thead th {
+            background-color: #ff007f;
             color: white;
         }
         .table tbody tr:nth-child(odd) {
@@ -133,49 +146,35 @@ $stmt->close();
         <h2 class="page-title">Vos différentes tâche dans ce projet</h2>
         <div class="row">
             <!-- Bouton et tableau assignationrécapitulatif des tâches -->
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Vos differentes tâche a faire s'affiche ici</h5>
-            <table class="table table-bordered">
-                <thead>
-                    <tr class="card-header bg-gradient-rose-red text-white">
-                        <th>ID Tâche</th>
-                        <th>Titre</th>
-                        <th>Description</th>
-                        <th>Date début</th>
-                        <th>Date fin</th>
-                        <th>Statut</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($taches as $tache) : ?>
-                        <tr>
-                            <td><?php echo $tache['id_tache']; ?></td>
-                            <td><?php echo htmlspecialchars($tache['titre']); ?></td>
-                            <td>
-                                <?php
-                                $query_assignation = $conn->prepare("SELECT nom, prenom FROM utilisateur WHERE id_utilisateur = (SELECT id_ass FROM tache WHERE id_tache = ?)");
-                                $query_assignation->bind_param("i", $tache['id_tache']);
-                                $query_assignation->execute();
-                                $result_assignation = $query_assignation->get_result();
-                                $assignation = $result_assignation->fetch_assoc();
-                                $query_assignation->close();
-                                if ($assignation) {
-                                    echo htmlspecialchars($assignation['nom'] . ' ' . $assignation['prenom']);
-                                } else {
-                                    echo '<div class="text-danger"><B>Non assigné</B></div>';
-                                }
-                                ?>
-                            </td>
-                            <td>
-                                <a href="modifier_assignation.php?id_tache=<?php echo $tache['id_tache']; ?>&id_projet=<?php echo $id_projet; ?>" class="btn btn-success btn-sm">Modifier</a>
-                            </td>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Vos différentes tâches à faire s'affichent ici</h5>
+                <table class="table table-bordered A">
+                    <thead>
+                        <tr class="card-header bg-gradient-rose-red text-white">
+                            <th>ID Tâche</th>
+                            <th>Titre</th>
+                            <th>Description</th>
+                            <th>Date début</th>
+                            <th>Date fin</th>
+                            <th>Statut</th>
                         </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($taches as $tache) : ?>
+                            <tr>
+                                <td><?php echo $tache['id_tache']; ?></td>
+                                <td><?php echo htmlspecialchars($tache['titre']); ?></td>
+                                <td><?php echo htmlspecialchars($tache['description']); ?></td>
+                                <td><?php echo htmlspecialchars($tache['date_debut']); ?></td>
+                                <td><?php echo htmlspecialchars($tache['date_fin']); ?></td>
+                                <td><?php echo htmlspecialchars($tache['statut_tache']); ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
         </div>
     </div>
     

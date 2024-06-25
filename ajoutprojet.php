@@ -146,43 +146,11 @@ if (isset($_POST['creer'])) {
                 </div>
                 <div class="col-md-6">
                     <h2><b>Aperçu du Tableau de Bord</b></h2>
-                    <div class="preview-table">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Tâche</th>
-                                    <th>Statut</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="table-primary">
-                                    <td>1</td>
-                                    <td>Exemple de Tâche 1</td>
-                                    <td>En Cours</td>
-                                </tr>
-                                <tr class="table-success">
-                                    <td>2</td>
-                                    <td>Exemple de Tâche 2</td>
-                                    <td>A Faire</td>
-                                </tr>
-                                <tr class="table-danger">
-                                    <td>3</td>
-                                    <td>Exemple de Tâche 3</td>
-                                    <td>Terminé</td>
-                                </tr>
-                                <tr class="table-warning">
-                                    <td>4</td>
-                                    <td>Exemple de Tâche 4</td>
-                                    <td>Terminé</td>
-                                </tr>
-                                <tr class="table-info">
-                                    <td>5</td>
-                                    <td>Exemple de Tâche 5</td>
-                                    <td>Terminé</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="card">
+                        <img src="assets/img/PR.jpg" alt="">
+                    </div><br><br>
+                    <div class="card">
+                        <img src="assets/img/PR.jpg" alt="">
                     </div>
                 </div>
             </div>
